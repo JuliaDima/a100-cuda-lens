@@ -1,23 +1,13 @@
 # a100-cuda-lens
-Interactive visualisation of the A100+CUDA internals.
+Interactive visualisation of A100 + CUDA internals for learning GPU architecture and execution behavior.
 
-## Local development
+Live page: `https://juliadima.github.io/a100-cuda-lens/`
 
-```bash
-npm install
-npm run dev
-```
+## What this repo is for
+This project helps to build intuition for how CUDA programs run on NVIDIA A100 GPUs, with interactive diagrams.
 
-## Build
-
-```bash
-npm run build
-```
-
-## CI/CD to GitHub Pages
-
-The workflow at `.github/workflows/deploy-pages.yml`:
-
-- builds this React page from `cuda_diagrams.jsx` with Vite
-- uploads `dist/` as the Pages artifact
-- deploys on push to `main` or `master` (and manual dispatch)
+## What you can explore
+- GPU overview (SM layout and hardware structure)
+- CUDA execution hierarchy (grid, blocks, threads, warps)
+- Warp scheduling and latency hiding
+- Memory hierarchy (registers, shared memory, caches, global memory)
