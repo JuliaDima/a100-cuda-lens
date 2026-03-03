@@ -1,7 +1,7 @@
 # a100-cuda-lens
 Interactive visualisation of A100 + CUDA internals for learning GPU architecture and execution behavior.
 
-Live page: [`juliadima.github.io/a100-cuda-lens`](`https://juliadima.github.io/a100-cuda-lens/`)
+Live page: [juliadima.github.io/a100-cuda-lens](https://juliadima.github.io/a100-cuda-lens/)
 
 ## What this repo is for
 This project helps to build intuition for how CUDA programs run on NVIDIA A100 GPUs, with interactive diagrams.
