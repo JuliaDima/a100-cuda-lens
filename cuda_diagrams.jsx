@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const style = `
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap');
@@ -863,13 +863,19 @@ export default function App() {
   const [activeSM, setActiveSM] = useState(null);
   const [activeBlock, setActiveBlock] = useState(0);
   const [laneScenario, setLaneScenario] = useState(0);
+  const smDetailRef = useRef(null);
 
-  const tabs = ["GPU Overview", "Execution Hierarchy", "Warp Scheduling", "Lanes in a Warp", "Memory Hierarchy"];
+  const tabs = ["GPU Overview", "Execution Hierarchy", "Warps and Lanes", "Memory Hierarchy"];
 
   // 128 threads in 4 warps of 32
   const threads = Array.from({ length: 128 }, (_, i) => ({ id: i, warp: Math.floor(i / 32) }));
   const lanes = Array.from({ length: 32 }, (_, i) => i);
   const selectedLaneScenario = laneScenarios[laneScenario];
+
+  useEffect(() => {
+    if (tab !== 0 || activeSM === null) return;
+    smDetailRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [activeSM, tab]);
 
   return (
     <>
@@ -919,7 +925,7 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-                <div className={`sm-detail ${activeSM !== null ? "visible" : ""}`}>
+                <div ref={smDetailRef} className={`sm-detail ${activeSM !== null ? "visible" : ""}`}>
                   <h4>SM {activeSM} — Internal Structure (Ampere)</h4>
                   <div className="sm-internals">
                     {[
@@ -1014,11 +1020,11 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 2: Warp Scheduling */}
+        {/* TAB 2: Warps and Lanes */}
         {tab === 2 && (
           <div className="diagram">
             <div className="gpu-schematic">
-              <h3>Warp Scheduling on a Single SM — Latency Hiding</h3>
+              <h3>Warps and Lanes on a Single SM — Scheduling, Divergence, Cooperation</h3>
               <div className="warp-diagram">
                 <div className="sm-box">
                   <span className="box-label">SM — Warp Pool (up to 64 warps)</span>
@@ -1064,16 +1070,7 @@ export default function App() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: Lanes */}
-        {tab === 3 && (
-          <div className="diagram">
-            <div className="gpu-schematic">
-              <h3>Lanes Inside a Warp — SIMT Utilization and Cooperation</h3>
-              <div className="lane-panel">
+              <div className="lane-panel" style={{ marginTop: 16 }}>
                 <div className="lane-box">
                   <span className="box-label">WARP 0 (LANES 0–31)</span>
                   <div className="lane-grid">
@@ -1121,8 +1118,8 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 4: Memory Hierarchy */}
-        {tab === 4 && (
+        {/* TAB 3: Memory Hierarchy */}
+        {tab === 3 && (
           <div className="diagram">
             <div className="gpu-schematic">
               <h3>GPU Memory Hierarchy — Speed vs Capacity</h3>
