@@ -893,7 +893,7 @@ export default function App() {
   const [activeSM, setActiveSM] = useState(null);
   const [activeBlock, setActiveBlock] = useState(0);
   const [laneScenario, setLaneScenario] = useState(0);
-  const [activeWarp, setActiveWarp] = useState(0);
+  const [activeWarp, setActiveWarp] = useState(null);
   const smDetailRef = useRef(null);
 
   const tabs = ["GPU Overview", "Execution Hierarchy", "Warps and Lanes", "Memory Hierarchy"];
@@ -906,7 +906,7 @@ export default function App() {
     ...warpStates,
     ...Array.from({ length: 16 }, (_, i) => ({ id: i + 16, state: "idle", label: `W${i + 16}` })),
   ];
-  const selectedWarp = warpPool.find((w) => w.id === activeWarp) || warpPool[0];
+  const selectedWarp = warpPool.find((w) => w.id === activeWarp) || null;
 
   useEffect(() => {
     if (tab !== 0 || activeSM === null) return;
@@ -1082,9 +1082,17 @@ export default function App() {
                     ))}
                   </div>
                   <div className="warp-dropdown">
-                    <div className="warp-dropdown-title">{selectedWarp.label} selected</div>
+                    <div className="warp-dropdown-title">
+                      {selectedWarp ? `${selectedWarp.label} selected` : "Select a warp"}
+                    </div>
                     <div className="warp-dropdown-line">
-                      State: <strong style={{ color: "var(--cyan)" }}>{selectedWarp.state}</strong>. Click another warp in the pool to inspect it and sync the lane view below.
+                      {selectedWarp ? (
+                        <>
+                          State: <strong style={{ color: "var(--cyan)" }}>{selectedWarp.state}</strong>. Click another warp in the pool to inspect it and sync the lane view below.
+                        </>
+                      ) : (
+                        <>Click any warp in the pool to unhide its lane-level visualization below.</>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1110,54 +1118,58 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <div className="lane-panel" style={{ marginTop: 16 }}>
-                <div className="lane-box">
-                  <span className="box-label">{selectedWarp.label} (LANES 0–31)</span>
-                  <div className="lane-grid">
-                    {lanes.map((lane) => (
-                      <div
-                        key={lane}
-                        className={`lane-cell ${selectedLaneScenario.laneClass(lane)}`}
-                      >
-                        L{lane}
+              {selectedWarp && (
+                <>
+                  <div className="lane-panel" style={{ marginTop: 16 }}>
+                    <div className="lane-box">
+                      <span className="box-label">{selectedWarp.label} (LANES 0–31)</span>
+                      <div className="lane-grid">
+                        {lanes.map((lane) => (
+                          <div
+                            key={lane}
+                            className={`lane-cell ${selectedLaneScenario.laneClass(lane)}`}
+                          >
+                            L{lane}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  <div className="lane-controls">
-                    {laneScenarios.map((scenario, idx) => (
-                      <button
-                        key={scenario.label}
-                        className={`lane-btn ${laneScenario === idx ? "active" : ""}`}
-                        onClick={() => setLaneScenario(idx)}
-                      >
-                        {scenario.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="lane-info">
-                  <h4>{selectedLaneScenario.title}</h4>
-                  <div className="lane-note">{selectedLaneScenario.detail}</div>
-                  <div className="lane-note">
-                    Active warp context: <strong style={{ color: "var(--cyan)" }}>{selectedWarp.label}</strong> in state{" "}
-                    <strong style={{ color: "var(--cyan)" }}>{selectedWarp.state}</strong>.
-                  </div>
-                  <div className="stat-row" style={{ marginTop: 0 }}>
-                    {selectedLaneScenario.stats.map((s) => (
-                      <div key={s.label} className="stat-chip" style={{ flex: 1 }}>
-                        <span className="s-label">{s.label}</span>
-                        <span className="s-value" style={{ fontSize: 12 }}>{s.value}</span>
+                      <div className="lane-controls">
+                        {laneScenarios.map((scenario, idx) => (
+                          <button
+                            key={scenario.label}
+                            className={`lane-btn ${laneScenario === idx ? "active" : ""}`}
+                            onClick={() => setLaneScenario(idx)}
+                          >
+                            {scenario.label}
+                          </button>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+                    <div className="lane-info">
+                      <h4>{selectedLaneScenario.title}</h4>
+                      <div className="lane-note">{selectedLaneScenario.detail}</div>
+                      <div className="lane-note">
+                        Active warp context: <strong style={{ color: "var(--cyan)" }}>{selectedWarp.label}</strong> in state{" "}
+                        <strong style={{ color: "var(--cyan)" }}>{selectedWarp.state}</strong>.
+                      </div>
+                      <div className="stat-row" style={{ marginTop: 0 }}>
+                        {selectedLaneScenario.stats.map((s) => (
+                          <div key={s.label} className="stat-chip" style={{ flex: 1 }}>
+                            <span className="s-label">{s.label}</span>
+                            <span className="s-value" style={{ fontSize: 12 }}>{s.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="annotation">
-                <strong>Practical rule:</strong> Keep lanes active together whenever possible. Restrict work to lane 0 only when it removes expensive operations (atomics, global writes, or redundant loads).
-              </div>
-              <div className="annotation" style={{ marginTop: 8, borderLeftColor: "var(--pink)" }}>
-                <strong>Lane-aware performance checks:</strong> Watch branch efficiency and warp execution efficiency in Nsight Compute. If they drop, lanes are likely idle or diverged.
-              </div>
+                  <div className="annotation">
+                    <strong>Practical rule:</strong> Keep lanes active together whenever possible. Restrict work to lane 0 only when it removes expensive operations (atomics, global writes, or redundant loads).
+                  </div>
+                  <div className="annotation" style={{ marginTop: 8, borderLeftColor: "var(--pink)" }}>
+                    <strong>Lane-aware performance checks:</strong> Watch branch efficiency and warp execution efficiency in Nsight Compute. If they drop, lanes are likely idle or diverged.
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
