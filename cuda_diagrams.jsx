@@ -456,7 +456,37 @@ const style = `
   .warp-card.ready { background: #00ff9d15; border-color: var(--green); color: var(--green); }
   .warp-card.stalled { background: #ff7b2c15; border-color: var(--orange); color: var(--orange); }
   .warp-card.executing { background: #ffd42630; border-color: var(--yellow); color: var(--yellow); animation: pulse 0.8s infinite alternate; }
+  .warp-card.idle { background: #94a3b815; border-color: var(--muted); color: var(--muted); }
+  .warp-card.selected {
+    outline: 1px solid var(--cyan);
+    box-shadow: 0 0 0 2px #00cfff26;
+    transform: translateY(-1px);
+  }
   @keyframes pulse { from { opacity: 0.7; } to { opacity: 1; } }
+
+  .warp-dropdown {
+    margin-top: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+    padding: 10px;
+  }
+
+  .warp-dropdown-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .warp-dropdown-line {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text);
+    line-height: 1.5;
+  }
 
   .warp-legend-box {
     display: flex;
@@ -863,6 +893,7 @@ export default function App() {
   const [activeSM, setActiveSM] = useState(null);
   const [activeBlock, setActiveBlock] = useState(0);
   const [laneScenario, setLaneScenario] = useState(0);
+  const [activeWarp, setActiveWarp] = useState(0);
   const smDetailRef = useRef(null);
 
   const tabs = ["GPU Overview", "Execution Hierarchy", "Warps and Lanes", "Memory Hierarchy"];
@@ -871,6 +902,11 @@ export default function App() {
   const threads = Array.from({ length: 128 }, (_, i) => ({ id: i, warp: Math.floor(i / 32) }));
   const lanes = Array.from({ length: 32 }, (_, i) => i);
   const selectedLaneScenario = laneScenarios[laneScenario];
+  const warpPool = [
+    ...warpStates,
+    ...Array.from({ length: 16 }, (_, i) => ({ id: i + 16, state: "idle", label: `W${i + 16}` })),
+  ];
+  const selectedWarp = warpPool.find((w) => w.id === activeWarp) || warpPool[0];
 
   useEffect(() => {
     if (tab !== 0 || activeSM === null) return;
@@ -882,7 +918,7 @@ export default function App() {
       <style>{style}</style>
       <div className="app">
         <div className="header">
-          <h1>CUDA Architecture Reference</h1>
+          <h1>CUDA Architecture Reference (NVIDIA A100)</h1>
           <h2>GPU Execution Model — Visual Diagrams</h2>
         </div>
 
@@ -1034,18 +1070,22 @@ export default function App() {
                     ))}
                   </div>
                   <div className="warp-pool">
-                    {warpStates.map(w => (
-                      <div key={w.id} className={`warp-card ${w.state}`}>
+                    {warpPool.map((w) => (
+                      <div
+                        key={w.id}
+                        className={`warp-card ${w.state} ${activeWarp === w.id ? "selected" : ""}`}
+                        onClick={() => setActiveWarp(w.id)}
+                      >
                         {w.label}
                         <div style={{ fontSize: 8, marginTop: 2 }}>{w.state}</div>
                       </div>
                     ))}
-                    {Array.from({ length: 16 }, (_, i) => (
-                      <div key={i + 16} className="warp-card stalled" style={{ opacity: 0.3 }}>
-                        W{i + 16}
-                        <div style={{ fontSize: 8, marginTop: 2 }}>idle</div>
-                      </div>
-                    ))}
+                  </div>
+                  <div className="warp-dropdown">
+                    <div className="warp-dropdown-title">{selectedWarp.label} selected</div>
+                    <div className="warp-dropdown-line">
+                      State: <strong style={{ color: "var(--cyan)" }}>{selectedWarp.state}</strong>. Click another warp in the pool to inspect it and sync the lane view below.
+                    </div>
                   </div>
                 </div>
                 <div className="warp-legend-box">
@@ -1072,7 +1112,7 @@ export default function App() {
               </div>
               <div className="lane-panel" style={{ marginTop: 16 }}>
                 <div className="lane-box">
-                  <span className="box-label">WARP 0 (LANES 0–31)</span>
+                  <span className="box-label">{selectedWarp.label} (LANES 0–31)</span>
                   <div className="lane-grid">
                     {lanes.map((lane) => (
                       <div
@@ -1098,6 +1138,10 @@ export default function App() {
                 <div className="lane-info">
                   <h4>{selectedLaneScenario.title}</h4>
                   <div className="lane-note">{selectedLaneScenario.detail}</div>
+                  <div className="lane-note">
+                    Active warp context: <strong style={{ color: "var(--cyan)" }}>{selectedWarp.label}</strong> in state{" "}
+                    <strong style={{ color: "var(--cyan)" }}>{selectedWarp.state}</strong>.
+                  </div>
                   <div className="stat-row" style={{ marginTop: 0 }}>
                     {selectedLaneScenario.stats.map((s) => (
                       <div key={s.label} className="stat-chip" style={{ flex: 1 }}>
