@@ -10,4 +10,5 @@ This project helps to build intuition for how CUDA programs run on NVIDIA A100 G
 - GPU overview (SM layout and hardware structure)
 - CUDA execution hierarchy (grid, blocks, threads, warps)
 - Warp scheduling and latency hiding
+- Lanes inside a warp (utilization, divergence, reduction, broadcast/vote)
 - Memory hierarchy (registers, shared memory, caches, global memory)

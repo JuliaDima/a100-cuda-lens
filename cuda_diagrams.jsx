@@ -535,7 +535,142 @@ const style = `
     color: var(--cyan);
   }
 
-  /* ---- DIAGRAM 4: Memory hierarchy ---- */
+  /* ---- DIAGRAM 4: Lanes within a warp ---- */
+  .lane-panel {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+  }
+
+  .lane-box {
+    background: var(--surface);
+    border: 2px solid var(--cyan);
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+  }
+
+  .lane-box .box-label {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    background: var(--surface);
+    padding: 0 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cyan);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .lane-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .lane-cell {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 4px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--surface2);
+    transition: all 0.15s;
+  }
+
+  .lane-cell.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: #00ff9d15;
+  }
+
+  .lane-cell.helper {
+    border-color: var(--yellow);
+    color: var(--yellow);
+    background: #ffd42620;
+  }
+
+  .lane-cell.path-a {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    background: #00cfff15;
+  }
+
+  .lane-cell.path-b {
+    border-color: var(--pink);
+    color: var(--pink);
+    background: #ff4d8d15;
+  }
+
+  .lane-cell.idle {
+    opacity: 0.45;
+  }
+
+  .lane-controls {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .lane-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 8px 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .lane-btn:hover {
+    color: var(--text);
+    border-color: var(--cyan);
+  }
+
+  .lane-btn.active {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    background: #00cfff18;
+  }
+
+  .lane-info {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .lane-info h4 {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .lane-note {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    line-height: 1.5;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px;
+  }
+
+  /* ---- DIAGRAM 5: Memory hierarchy ---- */
   .mem-hierarchy {
     display: flex;
     flex-direction: column;
@@ -640,6 +775,13 @@ const style = `
     letter-spacing: 0.15em;
     margin-bottom: 16px;
   }
+
+  @media (max-width: 900px) {
+    .lane-panel,
+    .warp-diagram {
+      grid-template-columns: 1fr;
+    }
+  }
 `;
 
 const memData = [
@@ -669,15 +811,65 @@ const warpStates = [
   { id: 15, state: "ready", label: "W15" },
 ];
 
+const laneScenarios = [
+  {
+    label: "Full Warp",
+    title: "All 32 lanes do useful work",
+    detail: "Classic SIMT map: each lane handles one contiguous element, maximizing memory coalescing and throughput.",
+    stats: [
+      { label: "Active lanes", value: "32 / 32" },
+      { label: "Issue efficiency", value: "~100%" },
+      { label: "Typical pattern", value: "map / stencil" },
+    ],
+    laneClass: () => "active",
+  },
+  {
+    label: "Reduction",
+    title: "Warp reduction, lane 0 commits result",
+    detail: "Every lane contributes a partial value via shuffle operations; lane 0 performs the single global write or atomic.",
+    stats: [
+      { label: "Contributing lanes", value: "32 / 32" },
+      { label: "Global writes", value: "1 per warp" },
+      { label: "Benefit", value: "fewer atomics" },
+    ],
+    laneClass: (lane) => (lane === 0 ? "helper" : "active"),
+  },
+  {
+    label: "Divergence",
+    title: "Branch divergence serializes execution",
+    detail: "Half the lanes take one path and half take another. The warp runs both paths serially with masking.",
+    stats: [
+      { label: "Path A lanes", value: "16" },
+      { label: "Path B lanes", value: "16" },
+      { label: "Effective throughput", value: "~50%" },
+    ],
+    laneClass: (lane) => (lane < 16 ? "path-a" : "path-b"),
+  },
+  {
+    label: "Broadcast/Vote",
+    title: "One lane serves the warp",
+    detail: "Lane 0 can load once and broadcast via shuffle, or aggregate a warp vote result before one control decision.",
+    stats: [
+      { label: "Loader lane", value: "lane 0" },
+      { label: "Consumers", value: "31 peers" },
+      { label: "Redundant loads", value: "reduced" },
+    ],
+    laneClass: (lane) => (lane === 0 ? "helper" : "active"),
+  },
+];
+
 export default function App() {
   const [tab, setTab] = useState(0);
   const [activeSM, setActiveSM] = useState(null);
   const [activeBlock, setActiveBlock] = useState(0);
+  const [laneScenario, setLaneScenario] = useState(0);
 
-  const tabs = ["GPU Overview", "Execution Hierarchy", "Warp Scheduling", "Memory Hierarchy"];
+  const tabs = ["GPU Overview", "Execution Hierarchy", "Warp Scheduling", "Lanes in a Warp", "Memory Hierarchy"];
 
   // 128 threads in 4 warps of 32
   const threads = Array.from({ length: 128 }, (_, i) => ({ id: i, warp: Math.floor(i / 32) }));
+  const lanes = Array.from({ length: 32 }, (_, i) => i);
+  const selectedLaneScenario = laneScenarios[laneScenario];
 
   return (
     <>
@@ -876,8 +1068,61 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 3: Memory Hierarchy */}
+        {/* TAB 3: Lanes */}
         {tab === 3 && (
+          <div className="diagram">
+            <div className="gpu-schematic">
+              <h3>Lanes Inside a Warp — SIMT Utilization and Cooperation</h3>
+              <div className="lane-panel">
+                <div className="lane-box">
+                  <span className="box-label">WARP 0 (LANES 0–31)</span>
+                  <div className="lane-grid">
+                    {lanes.map((lane) => (
+                      <div
+                        key={lane}
+                        className={`lane-cell ${selectedLaneScenario.laneClass(lane)}`}
+                      >
+                        L{lane}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="lane-controls">
+                    {laneScenarios.map((scenario, idx) => (
+                      <button
+                        key={scenario.label}
+                        className={`lane-btn ${laneScenario === idx ? "active" : ""}`}
+                        onClick={() => setLaneScenario(idx)}
+                      >
+                        {scenario.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="lane-info">
+                  <h4>{selectedLaneScenario.title}</h4>
+                  <div className="lane-note">{selectedLaneScenario.detail}</div>
+                  <div className="stat-row" style={{ marginTop: 0 }}>
+                    {selectedLaneScenario.stats.map((s) => (
+                      <div key={s.label} className="stat-chip" style={{ flex: 1 }}>
+                        <span className="s-label">{s.label}</span>
+                        <span className="s-value" style={{ fontSize: 12 }}>{s.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="annotation">
+                <strong>Practical rule:</strong> Keep lanes active together whenever possible. Restrict work to lane 0 only when it removes expensive operations (atomics, global writes, or redundant loads).
+              </div>
+              <div className="annotation" style={{ marginTop: 8, borderLeftColor: "var(--pink)" }}>
+                <strong>Lane-aware performance checks:</strong> Watch branch efficiency and warp execution efficiency in Nsight Compute. If they drop, lanes are likely idle or diverged.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: Memory Hierarchy */}
+        {tab === 4 && (
           <div className="diagram">
             <div className="gpu-schematic">
               <h3>GPU Memory Hierarchy — Speed vs Capacity</h3>
