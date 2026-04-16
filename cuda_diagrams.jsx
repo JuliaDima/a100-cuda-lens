@@ -932,10 +932,61 @@ const style = `
     transition: background 0.25s, border-color 0.25s;
   }
 
+  /* ---- SM Sub-Partition View ---- */
+  .sm-shared-bar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .sm-shared-chip {
+    background: var(--surface); border: 1px solid var(--orange); border-radius: 6px;
+    padding: 6px 10px; font-family: var(--mono); font-size: 9px; color: var(--orange);
+    flex: 1; min-width: 120px; text-align: center;
+  }
+  .sm-subparts {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px;
+  }
+  .subpart {
+    border: 1px solid var(--border); border-radius: 8px; padding: 8px;
+    background: var(--surface); cursor: pointer; transition: all 0.15s;
+  }
+  .subpart:hover { border-color: var(--cyan); }
+  .subpart.sp-active { border: 2px solid var(--cyan); background: #f0f7ff; }
+  .sp-header {
+    font-family: var(--mono); font-size: 8px; color: var(--cyan);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; font-weight: 600;
+  }
+  .sp-core-grid {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; margin-bottom: 5px;
+  }
+  .core-dot { width: 9px; height: 9px; border-radius: 2px; background: #bbf7d0; border: 1px solid var(--green); }
+  .sp-badges { display: flex; flex-direction: column; gap: 2px; margin-bottom: 6px; }
+  .sp-badge { font-family: var(--mono); font-size: 8px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
+  .sp-badge-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+  .sp-warp-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .sp-warp-slot {
+    border: 1px solid var(--border); border-radius: 2px; padding: 1px 0;
+    text-align: center; font-family: var(--mono); font-size: 6px;
+    color: var(--muted); background: var(--surface2);
+  }
+  .sp-detail-box {
+    border: 2px solid var(--cyan); border-radius: 8px; padding: 12px;
+    background: #f0f7ff; margin-top: 4px;
+  }
+  .sp-detail-box h5 {
+    font-family: var(--mono); font-size: 10px; color: var(--cyan);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;
+  }
+  .sp-thread-map { display: grid; grid-template-columns: repeat(32, 1fr); gap: 1px; margin-bottom: 4px; }
+  .sp-thread-lane {
+    height: 18px; background: #bbf7d0; border: 1px solid var(--green); border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 5px; color: var(--green);
+  }
+  .sp-core-row { display: grid; grid-template-columns: repeat(32, 1fr); gap: 1px; margin-bottom: 8px; }
+  .sp-core-cell { height: 14px; background: #d1fae5; border: 1px solid var(--green); border-radius: 2px; }
+
   @media (max-width: 900px) {
     .lane-panel,
-    .warp-diagram {
-      grid-template-columns: 1fr;
+    .warp-diagram,
+    .sm-subparts {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 `;
@@ -1023,6 +1074,7 @@ export default function App() {
   const [gridExample, setGridExample] = useState(0);
   const [selectedGridBlock, setSelectedGridBlock] = useState(null);
   const [bankMode, setBankMode] = useState(0);
+  const [activeSMSubPart, setActiveSMSubPart] = useState(null);
   const smDetailRef = useRef(null);
 
   const tabs = ["GPU Overview", "Execution Hierarchy", "Warps and Lanes", "Memory Hierarchy"];
@@ -1081,7 +1133,7 @@ export default function App() {
                         <div
                           key={i}
                           className={`sm-chip ${activeSM === i ? "active" : ""}`}
-                          onClick={() => setActiveSM(activeSM === i ? null : i)}
+                          onClick={() => { setActiveSM(activeSM === i ? null : i); setActiveSMSubPart(null); }}
                         >
                           <span className="sm-label">SM</span>
                           <span className="sm-num">{i}</span>
@@ -1091,29 +1143,86 @@ export default function App() {
                   </div>
                 </div>
                 <div ref={smDetailRef} className={`sm-detail ${activeSM !== null ? "visible" : ""}`}>
-                  <h4>SM {activeSM} — Internal Structure (Ampere)</h4>
-                  <div className="sm-internals">
-                    {[
-                      { label: "CUDA Cores", value: "128", color: "var(--green)" },
-                      { label: "FP64 Units", value: "64", color: "var(--cyan)" },
-                      { label: "Tensor Cores", value: "4", color: "var(--pink)" },
-                      { label: "Warp Schedulers", value: "4", color: "var(--yellow)" },
-                      { label: "Shared Memory", value: "164 KB", color: "var(--orange)" },
-                      { label: "Max Warps", value: "64", color: "var(--green)" },
-                      { label: "Register File", value: "65,536 regs", color: "var(--cyan)" },
-                      { label: "Max Threads", value: "2048", color: "var(--pink)" },
-                      { label: "Max Blocks", value: "32", color: "var(--muted)" },
-                    ].map((c, i) => (
-                      <div key={i} className="sm-component">
-                        <span className="c-label">{c.label}</span>
-                        <span className="c-value" style={{ color: c.color }}>{c.value}</span>
+                  <h4>SM {activeSM} — Ampere Sub-Partition Architecture</h4>
+
+                  {/* Shared resources bar */}
+                  <div className="sm-shared-bar">
+                    <div className="sm-shared-chip">
+                      <div style={{ color: "var(--muted)", fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>On-chip (SMEM + L1)</div>
+                      192 KB total — up to 164 KB as shared mem
+                    </div>
+                    <div className="sm-shared-chip">
+                      <div style={{ color: "var(--muted)", fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Register File</div>
+                      256 KB = 65,536 × 32-bit regs
+                    </div>
+                    <div className="sm-shared-chip">
+                      <div style={{ color: "var(--muted)", fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Capacity limits</div>
+                      64 warps · 2048 threads · 32 blocks
+                    </div>
+                  </div>
+
+                  {/* 4 Sub-partitions */}
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    4 sub-partitions — click one to see warp→core mapping
+                  </div>
+                  <div className="sm-subparts">
+                    {[0, 1, 2, 3].map((sp) => (
+                      <div key={sp} className={`subpart ${activeSMSubPart === sp ? "sp-active" : ""}`}
+                        onClick={() => setActiveSMSubPart(activeSMSubPart === sp ? null : sp)}>
+                        <div className="sp-header">Sub-Part {sp} · Sched {sp}</div>
+                        {/* 32 CUDA FP32/INT32 cores */}
+                        <div className="sp-core-grid">
+                          {Array.from({ length: 32 }, (_, c) => <div key={c} className="core-dot" />)}
+                        </div>
+                        <div className="sp-badges">
+                          <div className="sp-badge">
+                            <div className="sp-badge-dot" style={{ background: "#bae6fd", border: "1px solid #0077aa" }} />
+                            16 FP64 units
+                          </div>
+                          <div className="sp-badge">
+                            <div className="sp-badge-dot" style={{ background: "#fbcfe8", border: "1px solid #c4245e" }} />
+                            1 Tensor Core (3rd gen)
+                          </div>
+                        </div>
+                        <div style={{ fontFamily: "var(--mono)", fontSize: 7, color: "var(--muted)", marginBottom: 3 }}>16 resident warp slots:</div>
+                        <div className="sp-warp-slots">
+                          {Array.from({ length: 16 }, (_, w) => (
+                            <div key={w} className="sp-warp-slot">W{sp * 16 + w}</div>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>
+
+                  {/* Sub-partition detail on click */}
+                  {activeSMSubPart !== null && (
+                    <div className="sp-detail-box">
+                      <h5>Sub-Partition {activeSMSubPart} — how one warp executes</h5>
+                      <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--muted)", marginBottom: 6 }}>
+                        32 threads of one warp dispatch to 32 CUDA cores simultaneously (SIMT):
+                      </div>
+                      <div className="sp-thread-map">
+                        {Array.from({ length: 32 }, (_, t) => (
+                          <div key={t} className="sp-thread-lane" title={`Thread ${t}`}>{t}</div>
+                        ))}
+                      </div>
+                      <div style={{ fontFamily: "var(--mono)", fontSize: 8, color: "var(--muted)", marginBottom: 4, textAlign: "center" }}>
+                        ↓ 1-to-1: each thread lane → one CUDA core
+                      </div>
+                      <div className="sp-core-row">
+                        {Array.from({ length: 32 }, (_, c) => (
+                          <div key={c} className="sp-core-cell" title={`Core ${c}`} />
+                        ))}
+                      </div>
+                      <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text)", lineHeight: 1.6 }}>
+                        <strong style={{ color: "var(--cyan)" }}>Scheduler {activeSMSubPart}</strong> selects one ready warp per clock and issues its instruction to all 32 cores at once. If the chosen warp stalls (e.g. on a memory load), the scheduler instantly switches to another of its 16 resident warps — zero idle cycles provided there are enough warps to cover latency. The 3 other sub-partitions do the same independently and in parallel.
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="annotation">
-                <strong>Key insight:</strong> 108 SMs × 2048 threads/SM = <strong style={{ color: "var(--cyan)" }}>221,184 concurrent threads</strong> on an A100. The GPU hides memory latency by switching between the 64 warps resident on each SM, instead of making individual threads fast.
+                <strong>Key insight:</strong> 108 SMs × 2048 threads/SM = <strong style={{ color: "var(--cyan)" }}>221,184 concurrent threads</strong> on an A100. Each SM has 4 independent sub-partitions, each with its own warp scheduler, 32 CUDA cores, and 16 warp slots. The GPU hides memory latency by rotating between resident warps rather than making individual threads fast. <strong style={{ color: "var(--orange)" }}>→ See the Execution Hierarchy tab</strong> for how grids and blocks decompose into warps that land on these SMs.
               </div>
             </div>
           </div>
@@ -1166,7 +1275,7 @@ export default function App() {
                 </div>
               </div>
               <div className="annotation">
-                <strong>Selected block {activeBlock}:</strong> 128 threads → 4 warps of 32. All threads in this block will be scheduled on the <strong style={{ color: "var(--green)" }}>same SM</strong>. They share that SM's shared memory and can call <code style={{ color: "var(--cyan)" }}>__syncthreads()</code>. Blocks in <em>different</em> positions must be treated as independent (no guaranteed execution order).
+                <strong>Selected block {activeBlock}:</strong> 128 threads → 4 warps of 32. All threads in this block are scheduled on the <strong style={{ color: "var(--green)" }}>same SM</strong>, distributed across its 4 sub-partitions (up to 16 warps each). They share that SM's shared memory and can call <code style={{ color: "var(--cyan)" }}>__syncthreads()</code>. Blocks in <em>different</em> grid positions run independently with no guaranteed execution order. <strong style={{ color: "var(--orange)" }}>→ See the GPU Overview tab</strong> to explore the SM sub-partition and warp scheduler structure.
               </div>
               <div className="stat-row">
                 {[
