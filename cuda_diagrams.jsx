@@ -6,16 +6,16 @@ const style = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0a0e1a;
-    --surface: #111827;
-    --surface2: #1a2235;
-    --border: #1e2d45;
-    --green: #00ff9d;
-    --cyan: #00cfff;
-    --orange: #ff7b2c;
-    --pink: #ff4d8d;
-    --yellow: #ffd426;
-    --text: #e2e8f0;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface2: #f1f5f9;
+    --border: #cbd5e1;
+    --green: #009959;
+    --cyan: #0077aa;
+    --orange: #c95c10;
+    --pink: #c4245e;
+    --yellow: #9c7400;
+    --text: #1e293b;
     --muted: #64748b;
     --mono: 'JetBrains Mono', monospace;
     --sans: 'Syne', sans-serif;
@@ -127,7 +127,7 @@ const style = `
   }
 
   .memory-block {
-    background: linear-gradient(135deg, #1a2235, #0f1829);
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
     border: 1px solid var(--orange);
     border-radius: 8px;
     padding: 12px 16px;
@@ -172,7 +172,7 @@ const style = `
 
   .sm-chip:hover, .sm-chip.active {
     border-color: var(--green);
-    background: #0a1f0f;
+    background: #e8f5ee;
   }
 
   .sm-chip .sm-label {
@@ -192,7 +192,7 @@ const style = `
 
   .sm-detail {
     margin-top: 16px;
-    background: #0a1f0f;
+    background: #e8f5ee;
     border: 1px solid var(--green);
     border-radius: 8px;
     padding: 16px;
@@ -334,8 +334,8 @@ const style = `
 
   .block-box:hover, .block-box.sel {
     border-color: var(--pink);
-    background: #1f0a18;
-    box-shadow: 0 0 12px #ff4d8d33;
+    background: #fce8f0;
+    box-shadow: 0 0 12px #c4245e22;
   }
 
   .block-box .bb-label {
@@ -363,10 +363,10 @@ const style = `
     transition: all 0.1s;
   }
 
-  .thread-dot.warp-0 { background: #00ff9d33; border-color: var(--green); }
-  .thread-dot.warp-1 { background: #00cfff33; border-color: var(--cyan); }
-  .thread-dot.warp-2 { background: #ff7b2c33; border-color: var(--orange); }
-  .thread-dot.warp-3 { background: #ff4d8d33; border-color: var(--pink); }
+  .thread-dot.warp-0 { background: #bbf7d0; border-color: var(--green); }
+  .thread-dot.warp-1 { background: #bae6fd; border-color: var(--cyan); }
+  .thread-dot.warp-2 { background: #fed7aa; border-color: var(--orange); }
+  .thread-dot.warp-3 { background: #fbcfe8; border-color: var(--pink); }
 
   .warp-legend {
     display: flex;
@@ -426,7 +426,7 @@ const style = `
 
   .scheduler {
     flex: 1;
-    background: #0a1f0f;
+    background: #e8f5ee;
     border: 1px solid var(--green);
     border-radius: 6px;
     padding: 6px;
@@ -453,13 +453,13 @@ const style = `
     transition: all 0.15s;
   }
 
-  .warp-card.ready { background: #00ff9d15; border-color: var(--green); color: var(--green); }
-  .warp-card.stalled { background: #ff7b2c15; border-color: var(--orange); color: var(--orange); }
-  .warp-card.executing { background: #ffd42630; border-color: var(--yellow); color: var(--yellow); animation: pulse 0.8s infinite alternate; }
-  .warp-card.idle { background: #94a3b815; border-color: var(--muted); color: var(--muted); }
+  .warp-card.ready { background: #d1fae5; border-color: var(--green); color: var(--green); }
+  .warp-card.stalled { background: #ffedd5; border-color: var(--orange); color: var(--orange); }
+  .warp-card.executing { background: #fef9c3; border-color: var(--yellow); color: var(--yellow); animation: pulse 0.8s infinite alternate; }
+  .warp-card.idle { background: #f1f5f9; border-color: var(--muted); color: var(--muted); }
   .warp-card.selected {
     outline: 1px solid var(--cyan);
-    box-shadow: 0 0 0 2px #00cfff26;
+    box-shadow: 0 0 0 2px #0077aa26;
     transform: translateY(-1px);
   }
   @keyframes pulse { from { opacity: 0.7; } to { opacity: 1; } }
@@ -524,9 +524,9 @@ const style = `
     text-align: center;
   }
 
-  .legend-badge.ready { background: #00ff9d15; border-color: var(--green); color: var(--green); }
-  .legend-badge.stalled { background: #ff7b2c15; border-color: var(--orange); color: var(--orange); }
-  .legend-badge.executing { background: #ffd42630; border-color: var(--yellow); color: var(--yellow); }
+  .legend-badge.ready { background: #d1fae5; border-color: var(--green); color: var(--green); }
+  .legend-badge.stalled { background: #ffedd5; border-color: var(--orange); color: var(--orange); }
+  .legend-badge.executing { background: #fef9c3; border-color: var(--yellow); color: var(--yellow); }
 
   .legend-desc {
     font-family: var(--mono);
@@ -615,25 +615,25 @@ const style = `
   .lane-cell.active {
     border-color: var(--green);
     color: var(--green);
-    background: #00ff9d15;
+    background: #d1fae5;
   }
 
   .lane-cell.helper {
     border-color: var(--yellow);
     color: var(--yellow);
-    background: #ffd42620;
+    background: #fef9c3;
   }
 
   .lane-cell.path-a {
     border-color: var(--cyan);
     color: var(--cyan);
-    background: #00cfff15;
+    background: #dbeafe;
   }
 
   .lane-cell.path-b {
     border-color: var(--pink);
     color: var(--pink);
-    background: #ff4d8d15;
+    background: #fce8f0;
   }
 
   .lane-cell.idle {
@@ -668,7 +668,7 @@ const style = `
   .lane-btn.active {
     color: var(--cyan);
     border-color: var(--cyan);
-    background: #00cfff18;
+    background: #dbeafe;
   }
 
   .lane-info {
@@ -815,11 +815,11 @@ const style = `
 `;
 
 const memData = [
-  { name: "Registers", scope: "Per Thread", latency: "~1 cycle", size: "255 regs/thread", color: "#00ff9d", barWidth: "100%", managed: "Compiler" },
-  { name: "Shared Memory", scope: "Per Block (SM)", latency: "~1–5 cycles", size: "48–100 KB/SM", color: "#00cfff", barWidth: "85%", managed: "Programmer" },
-  { name: "L1 Cache", scope: "Per SM", latency: "~20 cycles", size: "Shared w/ SMEM", color: "#ffd426", barWidth: "65%", managed: "Hardware" },
-  { name: "L2 Cache", scope: "Device-wide", latency: "~100 cycles", size: "~40 MB (A100)", color: "#ff7b2c", barWidth: "40%", managed: "Hardware" },
-  { name: "Global Memory (DRAM)", scope: "Device-wide", latency: "~200+ cycles", size: "Tens of GB", color: "#ff4d8d", barWidth: "10%", managed: "Programmer" },
+  { name: "Registers", scope: "Per Thread", latency: "~1 cycle", size: "255 regs/thread", color: "#009959", barWidth: "100%", managed: "Compiler" },
+  { name: "Shared Memory", scope: "Per Block (SM)", latency: "~1–5 cycles", size: "48–100 KB/SM", color: "#0077aa", barWidth: "85%", managed: "Programmer" },
+  { name: "L1 Cache", scope: "Per SM", latency: "~20 cycles", size: "Shared w/ SMEM", color: "#9c7400", barWidth: "65%", managed: "Hardware" },
+  { name: "L2 Cache", scope: "Device-wide", latency: "~100 cycles", size: "~40 MB (A100)", color: "#c95c10", barWidth: "40%", managed: "Hardware" },
+  { name: "Global Memory (DRAM)", scope: "Device-wide", latency: "~200+ cycles", size: "Tens of GB", color: "#c4245e", barWidth: "10%", managed: "Programmer" },
 ];
 
 const warpStates = [
@@ -1021,7 +1021,7 @@ export default function App() {
                           {["W0 (0–31)", "W1 (32–63)", "W2 (64–95)", "W3 (96–127)"].map((w, wi) => (
                             <div key={wi} className="warp-pill">
                               <div className={`warp-dot warp-${wi}`} style={{
-                                background: ["#00ff9d33","#00cfff33","#ff7b2c33","#ff4d8d33"][wi],
+                                background: ["#bbf7d0","#bae6fd","#fed7aa","#fbcfe8"][wi],
                                 border: `1px solid ${["var(--green)","var(--cyan)","var(--orange)","var(--pink)"][wi]}`
                               }} />
                               {w}
@@ -1111,7 +1111,7 @@ export default function App() {
                     <div className="legend-desc">Waiting on global memory (~200 cycles), a dependency, or a sync barrier. Cannot execute.</div>
                   </div>
                   <div className="annotation" style={{ marginTop: 8 }}>
-                    <strong>Latency hiding (why occupancy matters!).:</strong> When W0 stalls on a memory fetch, the scheduler <em>immediately</em> switches to W1. No cycles are wasted, provided the warp pool is large enough.
+                    <strong>Latency hiding (why occupancy matters!):</strong> When W0 stalls on a memory fetch, the scheduler <em>immediately</em> switches to W1. No cycles are wasted, provided the warp pool is large enough.
                   </div>
                   <div className="annotation" style={{ marginTop: 8, borderLeftColor: "var(--pink)" }}>
                     <strong>Warp divergence:</strong> If threads within one warp take different branches of an <code style={{ color: "var(--cyan)" }}>if</code>, both paths execute serially with masking. Throughput halves for two-way divergence. Divergence <em>between</em> warps is free.
@@ -1210,7 +1210,7 @@ export default function App() {
                 ))}
               </div>
               <div className="annotation" style={{ marginTop: 16 }}>
-                <strong>Core optimisation pattern:</strong> Load a tile of data from <span style={{ color: "#ff4d8d" }}>global memory</span> into <span style={{ color: "#00cfff" }}>shared memory</span> once. Reuse it many times from shared memory. This is the tile/cache pattern: trade one slow fetch for many fast reads. This is the basis of optimised matrix multiply, convolutions, etc.
+                <strong>Core optimisation pattern:</strong> Load a tile of data from <span style={{ color: "#c4245e" }}>global memory</span> into <span style={{ color: "#0077aa" }}>shared memory</span> once. Reuse it many times from shared memory. This is the tile/cache pattern: trade one slow fetch for many fast reads. This is the basis of optimised matrix multiply, convolutions, etc.
               </div>
               <div className="annotation" style={{ marginTop: 8, borderLeftColor: "var(--pink)" }}>
                 <strong>Note:</strong> <code style={{ color: "var(--cyan)" }}>malloc()</code> on the host allocates in CPU RAM. <code style={{ color: "var(--cyan)" }}>cudaMalloc()</code> allocates in GPU global memory. These are separate address spaces. Data must be explicitly transferred via <code style={{ color: "var(--cyan)" }}>cudaMemcpy()</code> or through unified memory.
