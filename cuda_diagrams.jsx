@@ -806,6 +806,132 @@ const style = `
     margin-bottom: 16px;
   }
 
+  /* ---- Launch Syntax & dim3 ---- */
+  .syntax-display {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.9;
+    margin-bottom: 12px;
+  }
+  .syntax-display .kw { color: var(--cyan); }
+  .syntax-display .cm { color: var(--muted); font-style: italic; }
+  .syntax-display .fn { color: var(--orange); }
+  .syntax-display .num { color: var(--green); }
+
+  .example-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .example-tab {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .example-tab.active { color: var(--cyan); border-color: var(--cyan); background: #dbeafe; }
+  .example-tab:hover { color: var(--text); }
+
+  .grid-vis-wrap {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .mini-grid-container { flex-shrink: 0; }
+  .mini-grid-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .mini-grid { display: inline-grid; gap: 3px; }
+  .mini-block {
+    width: 54px; height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 2px;
+    cursor: pointer; transition: all 0.15s; font-family: var(--mono);
+  }
+  .mini-block:hover, .mini-block.selb { border-color: var(--cyan); background: #dbeafe; }
+  .mini-block .mb-label { font-size: 7px; color: var(--muted); text-transform: uppercase; }
+  .mini-block .mb-coords { font-size: 9px; color: var(--cyan); }
+
+  .thread-detail-panel {
+    flex: 1; min-width: 240px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px;
+  }
+  .thread-detail-panel h4 {
+    font-family: var(--mono); font-size: 10px; color: var(--cyan);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;
+  }
+  .thread-grid-vis { display: inline-grid; gap: 3px; margin-bottom: 10px; max-width: 100%; }
+  .tcell {
+    width: 30px; height: 26px;
+    border: 1px solid var(--border); border-radius: 3px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 7px; color: var(--muted);
+    flex-direction: column; gap: 1px;
+  }
+  .tcell.warp-even { background: #bbf7d0; border-color: var(--green); color: var(--green); }
+  .tcell.warp-odd  { background: #bae6fd; border-color: var(--cyan);  color: var(--cyan);  }
+
+  .layer-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .layer-card {
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; background: var(--surface2);
+  }
+  .layer-card .lc-z {
+    font-family: var(--mono); font-size: 9px; color: var(--pink);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; display: block;
+  }
+
+  /* ---- Bank Conflicts ---- */
+  .bank-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .bank-mode-row { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
+  .bank-btn {
+    padding: 7px 14px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--surface2); color: var(--muted);
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.08em; cursor: pointer; transition: all 0.15s;
+  }
+  .bank-btn.b-conflict { border-color: var(--pink); color: var(--pink); background: #fce8f0; }
+  .bank-btn.b-ok { border-color: var(--green); color: var(--green); background: #d1fae5; }
+  .bank-vis { overflow-x: auto; padding-bottom: 8px; }
+  .bank-col-heads { display: flex; gap: 2px; margin-bottom: 3px; margin-left: 52px; }
+  .bank-ch {
+    width: 24px; text-align: center;
+    font-family: var(--mono); font-size: 7px; color: var(--muted); flex-shrink: 0;
+  }
+  .bank-row-wrap { display: flex; gap: 2px; margin-bottom: 2px; align-items: center; }
+  .bank-row-lbl {
+    width: 48px; font-family: var(--mono); font-size: 8px; color: var(--muted);
+    text-align: right; padding-right: 4px; flex-shrink: 0;
+  }
+  .bcell {
+    width: 24px; height: 24px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 7px; font-weight: 600;
+    flex-shrink: 0; border: 1px solid;
+    transition: background 0.25s, border-color 0.25s;
+  }
+
   @media (max-width: 900px) {
     .lane-panel,
     .warp-diagram {
@@ -894,6 +1020,9 @@ export default function App() {
   const [activeBlock, setActiveBlock] = useState(0);
   const [laneScenario, setLaneScenario] = useState(0);
   const [activeWarp, setActiveWarp] = useState(null);
+  const [gridExample, setGridExample] = useState(0);
+  const [selectedGridBlock, setSelectedGridBlock] = useState(null);
+  const [bankMode, setBankMode] = useState(0);
   const smDetailRef = useRef(null);
 
   const tabs = ["GPU Overview", "Execution Hierarchy", "Warps and Lanes", "Memory Hierarchy"];
@@ -1051,6 +1180,178 @@ export default function App() {
                     <span className="s-value">{s.value}</span>
                   </div>
                 ))}
+              </div>
+
+              {/* ---- Launch Syntax & Grid/Block Visualizer ---- */}
+              <div style={{ marginTop: 28, borderTop: "1px solid var(--border)", paddingTop: 20 }}>
+                <div className="section-title">Kernel Launch Syntax — &lt;&lt;&lt; grid, block &gt;&gt;&gt;</div>
+                <div className="syntax-display">
+                  <span className="kw">dim3</span> grid(<span className="num">Gx</span>, <span className="num">Gy</span>, <span className="num">Gz</span>);&nbsp;&nbsp;<span className="cm">// number of blocks per dimension</span><br/>
+                  <span className="kw">dim3</span> block(<span className="num">Bx</span>, <span className="num">By</span>, <span className="num">Bz</span>);&nbsp;&nbsp;<span className="cm">// threads per block per dimension</span><br/>
+                  <span className="fn">myKernel</span>&lt;&lt;&lt;grid, block&gt;&gt;&gt;(args);&nbsp;&nbsp;<span className="cm">// launch kernel on GPU</span>
+                </div>
+
+                <div className="example-tabs">
+                  {["1D — array", "2D — image", "3D — volume"].map((label, idx) => (
+                    <button key={idx} className={`example-tab ${gridExample === idx ? "active" : ""}`}
+                      onClick={() => { setGridExample(idx); setSelectedGridBlock(null); }}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* 1D example */}
+                {gridExample === 0 && (
+                  <>
+                    <div className="syntax-display">
+                      <span className="cm">// Process 128 elements: 4 blocks × 32 threads each</span><br/>
+                      <span className="kw">dim3</span> grid(<span className="num">4</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="cm">// gridDim.x = 4</span><br/>
+                      <span className="kw">dim3</span> block(<span className="num">32</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="cm">// blockDim.x = 32</span><br/>
+                      <span className="cm">// int i = blockIdx.x * 32 + threadIdx.x;</span>
+                    </div>
+                    <div className="grid-vis-wrap">
+                      <div className="mini-grid-container">
+                        <span className="mini-grid-label">Grid — 4 blocks along x</span>
+                        <div className="mini-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+                          {Array.from({ length: 4 }, (_, i) => (
+                            <div key={i} className={`mini-block ${selectedGridBlock === i ? "selb" : ""}`}
+                              onClick={() => setSelectedGridBlock(selectedGridBlock === i ? null : i)}>
+                              <span className="mb-label">block</span>
+                              <span className="mb-coords">({i})</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--muted)", marginTop: 6 }}>
+                          Click a block to inspect its threads
+                        </div>
+                      </div>
+                      {selectedGridBlock !== null && (
+                        <div className="thread-detail-panel">
+                          <h4>Block {selectedGridBlock} — 32 threads (1 warp)</h4>
+                          <div className="thread-grid-vis" style={{ gridTemplateColumns: "repeat(8, 1fr)" }}>
+                            {Array.from({ length: 32 }, (_, t) => (
+                              <div key={t} className="tcell warp-even">
+                                <div>T{t}</div>
+                                <div style={{ fontSize: 5, opacity: 0.8 }}>{selectedGridBlock * 32 + t}</div>
+                              </div>
+                            ))}
+                          </div>
+                          <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--muted)", lineHeight: 1.7 }}>
+                            <span style={{ color: "var(--green)" }}>threadIdx.x</span>: 0 → 31<br/>
+                            <span style={{ color: "var(--cyan)" }}>blockIdx.x</span>: {selectedGridBlock}<br/>
+                            Global id = {selectedGridBlock} × 32 + [0…31] = <strong style={{ color: "var(--text)" }}>{selectedGridBlock * 32}…{selectedGridBlock * 32 + 31}</strong>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* 2D example */}
+                {gridExample === 1 && (
+                  <>
+                    <div className="syntax-display">
+                      <span className="cm">// Process a 1024×1024 image: 64×64 grid of 16×16-thread blocks</span><br/>
+                      <span className="kw">dim3</span> grid(<span className="num">64</span>, <span className="num">64</span>);&nbsp;&nbsp;&nbsp;&nbsp;<span className="cm">// 4096 blocks total</span><br/>
+                      <span className="kw">dim3</span> block(<span className="num">16</span>, <span className="num">16</span>);&nbsp;&nbsp;&nbsp;&nbsp;<span className="cm">// 256 threads/block, 8 warps</span><br/>
+                      <span className="cm">// col = blockIdx.x*16 + threadIdx.x;&nbsp; row = blockIdx.y*16 + threadIdx.y;</span>
+                    </div>
+                    <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--muted)", marginBottom: 8 }}>
+                      Showing a 4×4 corner of the full 64×64 grid — click a block
+                    </div>
+                    <div className="grid-vis-wrap">
+                      <div className="mini-grid-container">
+                        <span className="mini-grid-label">Grid corner (4 × 4 of 64 × 64 blocks)</span>
+                        <div className="mini-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+                          {Array.from({ length: 16 }, (_, i) => {
+                            const bx = i % 4, by = Math.floor(i / 4);
+                            return (
+                              <div key={i} className={`mini-block ${selectedGridBlock === i ? "selb" : ""}`}
+                                onClick={() => setSelectedGridBlock(selectedGridBlock === i ? null : i)}>
+                                <span className="mb-label">block</span>
+                                <span className="mb-coords">({bx},{by})</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      {selectedGridBlock !== null && (() => {
+                        const bx = selectedGridBlock % 4, by = Math.floor(selectedGridBlock / 4);
+                        return (
+                          <div className="thread-detail-panel">
+                            <h4>Block ({bx},{by}) — 16×16 = 256 threads, 8 warps</h4>
+                            <div className="thread-grid-vis" style={{ gridTemplateColumns: "repeat(16, 1fr)" }}>
+                              {Array.from({ length: 256 }, (_, t) => {
+                                const tx = t % 16, ty = Math.floor(t / 16);
+                                const warpId = Math.floor(t / 32);
+                                return (
+                                  <div key={t} className={`tcell ${warpId % 2 === 0 ? "warp-even" : "warp-odd"}`}
+                                    title={`threadIdx=(${tx},${ty})`}>
+                                    <div style={{ fontSize: 5 }}>{tx},{ty}</div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--muted)", lineHeight: 1.7 }}>
+                              col = {bx}×16 + threadIdx.x = <strong style={{ color: "var(--text)" }}>{bx * 16}…{bx * 16 + 15}</strong><br/>
+                              row = {by}×16 + threadIdx.y = <strong style={{ color: "var(--text)" }}>{by * 16}…{by * 16 + 15}</strong><br/>
+                              <span style={{ color: "var(--green)" }}>■</span> even warps &nbsp;
+                              <span style={{ color: "var(--cyan)" }}>■</span> odd warps (threads 0–31 laid out left→right, then next row)
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </>
+                )}
+
+                {/* 3D example */}
+                {gridExample === 2 && (
+                  <>
+                    <div className="syntax-display">
+                      <span className="cm">// Process a 32×32×8 volume: 2×2×2 grid of 16×16×4-thread blocks</span><br/>
+                      <span className="kw">dim3</span> grid(<span className="num">2</span>, <span className="num">2</span>, <span className="num">2</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="cm">// 8 blocks total</span><br/>
+                      <span className="kw">dim3</span> block(<span className="num">16</span>, <span className="num">16</span>, <span className="num">4</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="cm">// 1024 threads/block</span><br/>
+                      <span className="cm">// z = blockIdx.z*4 + threadIdx.z;&nbsp; y = ...&nbsp; x = ...;</span>
+                    </div>
+                    <div className="layer-strip">
+                      {Array.from({ length: 2 }, (_, z) => (
+                        <div key={z} className="layer-card">
+                          <span className="lc-z">z-layer {z}</span>
+                          <div style={{ display: "inline-grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 4 }}>
+                            {Array.from({ length: 4 }, (_, i) => {
+                              const bx = i % 2, by = Math.floor(i / 2);
+                              return (
+                                <div key={i} style={{
+                                  width: 46, height: 36,
+                                  border: `1px solid ${z === 0 ? "#0077aa" : "#7c3aed"}`,
+                                  borderRadius: 5,
+                                  background: z === 0 ? "#bae6fd" : "#e9d5ff",
+                                  display: "flex", alignItems: "center", justifyContent: "center",
+                                  flexDirection: "column", gap: 2, fontFamily: "var(--mono)",
+                                }}>
+                                  <span style={{ fontSize: 7, color: "var(--muted)" }}>block</span>
+                                  <span style={{ fontSize: 9, color: z === 0 ? "#0077aa" : "#7c3aed" }}>({bx},{by},{z})</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 6, paddingLeft: 8 }}>
+                        <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--muted)", lineHeight: 1.8 }}>
+                          8 blocks total (2×2×2)<br/>
+                          Each block: 16×16×<span style={{ color: "var(--pink)" }}>4</span> = 1024 threads<br/>
+                          threadIdx has .x, .y, <span style={{ color: "var(--pink)" }}>.z</span><br/>
+                          blockIdx has .x, .y, <span style={{ color: "var(--pink)" }}>.z</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="annotation">
+                      <strong>3D grids map naturally to volume data:</strong> simulations, medical imaging (CT/MRI), fluid dynamics. Each spatial axis maps to one CUDA dimension. The global index formula extends to three axes: <code style={{ color: "var(--cyan)" }}>gx = blockIdx.x * blockDim.x + threadIdx.x</code>, and independently for y and z. Warp layout is still along the x-axis first — threads with consecutive threadIdx.x are in the same warp.
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -1214,6 +1515,92 @@ export default function App() {
               </div>
               <div className="annotation" style={{ marginTop: 8, borderLeftColor: "var(--pink)" }}>
                 <strong>Note:</strong> <code style={{ color: "var(--cyan)" }}>malloc()</code> on the host allocates in CPU RAM. <code style={{ color: "var(--cyan)" }}>cudaMalloc()</code> allocates in GPU global memory. These are separate address spaces. Data must be explicitly transferred via <code style={{ color: "var(--cyan)" }}>cudaMemcpy()</code> or through unified memory.
+              </div>
+
+              {/* ---- Shared Memory Bank Conflicts ---- */}
+              <div className="bank-section">
+                <div className="section-title">Shared Memory — Bank Conflicts</div>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text)", lineHeight: 1.7, marginBottom: 14 }}>
+                  Shared memory is divided into <strong style={{ color: "var(--cyan)" }}>32 banks</strong>, each 4 bytes wide (one float). Within a single warp, accesses to <strong style={{ color: "var(--pink)" }}>different banks happen in parallel</strong>. Accesses to the <strong style={{ color: "var(--pink)" }}>same bank are serialised</strong> — a <em>bank conflict</em>. The classic fix: pad the array's inner dimension by 1.
+                </div>
+
+                <div className="bank-mode-row">
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    Array declared as:
+                  </span>
+                  <button className={`bank-btn ${bankMode === 0 ? "b-conflict" : ""}`} onClick={() => setBankMode(0)}>
+                    float A[32][32] — conflict
+                  </button>
+                  <button className={`bank-btn ${bankMode === 1 ? "b-ok" : ""}`} onClick={() => setBankMode(1)}>
+                    float A[32][33] — no conflict
+                  </button>
+                </div>
+
+                <div className="bank-vis">
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--muted)", marginBottom: 6 }}>
+                    Cell = bank index. Formula: bank(row, col) = (row × {bankMode === 0 ? 32 : 33} + col) % 32. Colour = bank identity (8 colours for banks 0–7 of 32).
+                  </div>
+                  <div className="bank-col-heads">
+                    {Array.from({ length: 8 }, (_, c) => (
+                      <div key={c} className="bank-ch">col {c}</div>
+                    ))}
+                    {bankMode === 0 && (
+                      <div style={{ fontFamily: "var(--mono)", fontSize: 7, color: "var(--pink)", marginLeft: 8, alignSelf: "center" }}>
+                        ← one colour per column = one bank per column = conflict!
+                      </div>
+                    )}
+                    {bankMode === 1 && (
+                      <div style={{ fontFamily: "var(--mono)", fontSize: 7, color: "var(--green)", marginLeft: 8, alignSelf: "center" }}>
+                        ← diagonal pattern = every thread hits a different bank
+                      </div>
+                    )}
+                  </div>
+                  {Array.from({ length: 8 }, (_, row) => {
+                    const width = bankMode === 0 ? 32 : 33;
+                    return (
+                      <div key={row} className="bank-row-wrap">
+                        <div className="bank-row-lbl">T{row} / r{row}</div>
+                        {Array.from({ length: 8 }, (_, col) => {
+                          const bank = (row * width + col) % 32;
+                          const ci = bank % 8;
+                          const palette = [
+                            { bg: "#bbf7d0", bd: "#009959", tx: "#009959" },
+                            { bg: "#bae6fd", bd: "#0077aa", tx: "#0077aa" },
+                            { bg: "#fed7aa", bd: "#c95c10", tx: "#c95c10" },
+                            { bg: "#fbcfe8", bd: "#c4245e", tx: "#c4245e" },
+                            { bg: "#fef9c3", bd: "#9c7400", tx: "#9c7400" },
+                            { bg: "#e9d5ff", bd: "#7c3aed", tx: "#7c3aed" },
+                            { bg: "#ccfbf1", bd: "#0d9488", tx: "#0d9488" },
+                            { bg: "#fce7f3", bd: "#be185d", tx: "#be185d" },
+                          ];
+                          const p = palette[ci];
+                          return (
+                            <div key={col} className="bcell"
+                              style={{ background: p.bg, borderColor: p.bd, color: p.tx }}
+                              title={`bank ${bank}`}>
+                              {bank}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                  <div style={{
+                    fontFamily: "var(--mono)", fontSize: 10, marginTop: 10, marginLeft: 52,
+                    color: bankMode === 0 ? "var(--pink)" : "var(--green)",
+                  }}>
+                    {bankMode === 0
+                      ? "↑ Width 32: every row in column j maps to bank j. All 8 (→ 32) threads hit the same bank — 32-way conflict, 32× slower."
+                      : "↑ Width 33: diagonal pattern (bank = (row+col) % 32). Each thread hits a different bank — zero conflicts, full bandwidth."}
+                  </div>
+                </div>
+
+                <div className="annotation" style={{ marginTop: 14 }}>
+                  <strong>Why it works:</strong> with width 33, the offset of element <code style={{ color: "var(--cyan)" }}>A[row][col]</code> is <code style={{ color: "var(--cyan)" }}>row×33 + col</code>. Since 33 ≡ 1 (mod 32), each successive row shifts the bank by 1 — producing 32 distinct banks for 32 threads. Cost: one wasted float per row, i.e. 128 bytes per 32-row block of shared memory.
+                </div>
+                <div className="annotation" style={{ marginTop: 8, borderLeftColor: "var(--pink)" }}>
+                  <strong>Diagnose with Nsight Compute:</strong> "L1/TEX cache throughput" and "shared memory bank conflicts" counters. Conflicts appear most often in <em>transpose kernels</em>, <em>tiled matrix multiply</em>, and <em>reduction/scan trees</em> that read columns of a row-major shared array.
+                </div>
               </div>
             </div>
           </div>
